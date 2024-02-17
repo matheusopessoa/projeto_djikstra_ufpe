@@ -1,5 +1,3 @@
-#MAIN
-
 import sqlite3
 import math
 import random
@@ -10,7 +8,11 @@ import tkinter as tk
 from tkinter import messagebox
 import os
 
+
 def encontrar_e_apagar_arquivo(nome_pasta, nome_arquivo):
+    """
+    Função para encontrar e apagar um arquivo em uma determinada pasta.
+    """
     if not os.path.isdir(nome_pasta):
         return
     for root, dirs, files in os.walk(nome_pasta):
@@ -20,8 +22,10 @@ def encontrar_e_apagar_arquivo(nome_pasta, nome_arquivo):
             return
 
 
-nome_pasta = r'C:\Users\USER\Documents\proj_alg\projeto_djikstra_ufpe\bancos_de_dados'
+# MUDAR CAMINHO ABAIXO!
+nome_pasta = r'D:\User\Desktop\2 projeto_djikstra_ufpe-main\bancos_de_dados'
 nome_arquivo = 'grafo.db'
+# Chame a função para encontrar e apagar o arquivo
 encontrar_e_apagar_arquivo(nome_pasta, nome_arquivo)
 
 
@@ -29,6 +33,7 @@ class HeapMin:
     """
     Implementação de uma estrutura de Heap Mínima.
     """
+
     def __init__(self):
         self.tamanho = 0
         self.heap = []
@@ -127,10 +132,12 @@ class HeapMin:
         """
         return self.heap[indice // 2]
 
+
 class Grafo:
     """
     Implementação de um Grafo com o algoritmo de Dijkstra.
     """
+
     def __init__(self):
         self.vertices = {}
         self.num_vertices = 0
@@ -156,7 +163,7 @@ class Grafo:
         for vertice in self.vertices:
             print(vertice, "->", self.vertices[vertice])
 
-    def dijkstra(self,origem,destino):
+    def dijkstra(self, origem, destino):
         """
         Algoritmo de Dijkstra para encontrar os caminhos mais curtos a partir de um vértice de origem.
         """
@@ -181,11 +188,14 @@ class Grafo:
                     custo_vem[adjacente - 1] = [dist + peso, vertice]
                     heap.adiciona_no(dist + peso, adjacente)
         fim = time.time()
-        messagebox.showinfo("Resultado",f"Número de iterações: {iterações}\nTempo gasto: {fim - inicio}segundos")
+        messagebox.showinfo("Resultado", f"Número de iterações: {iterações}\nTempo gasto: {fim - inicio}segundos")
 
-        return custo_vem[destino - 1][0]  # Retorna o custo mínimo para o destino
-    
-    def printar_menor_caminho(custo_vem, origem, destino):
+        return custo_vem[destino - 1][0], custo_vem  # Retorna o custo mínimo para o destino e o caminho percorrido
+
+    def printar_menor_caminho(self, custo_vem, origem, destino):
+        """
+        Imprime o menor caminho encontrado pelo algoritmo de Dijkstra.
+        """
         caminho = []
         atual = destino
         while atual != origem:
@@ -211,6 +221,9 @@ class Grafo:
 
 
 def criar_banco_de_dados(arquivo_banco):
+    """
+    Cria um novo banco de dados SQLite.
+    """
     conexao = sqlite3.connect(arquivo_banco)
     cursor = conexao.cursor()
 
@@ -219,7 +232,11 @@ def criar_banco_de_dados(arquivo_banco):
     conexao.commit()
     conexao.close()
 
+
 def preencher_banco_de_dados(arquivo_banco, arquivo_edges):
+    """
+    Preenche o banco de dados SQLite com dados de um arquivo de arestas.
+    """
     with open(arquivo_banco, 'w') as db:
         # Inicialize o banco de dados SQLite
         conexao = sqlite3.connect(db.name)
@@ -253,44 +270,48 @@ def preencher_banco_de_dados(arquivo_banco, arquivo_edges):
         # Salve as alterações e feche a conexão com o banco de dados
         conexao.commit()
         conexao.close()
+
+
 class GUI:
     def __init__(self, master):
         self.master = master
         self.master.title("Algoritmo de Dijkstra")
-        
+
         self.label_origem = tk.Label(master, text="Vértice de origem:")
         self.label_origem.grid(row=0, column=0, padx=5, pady=5)
         self.entry_origem = tk.Entry(master)
         self.entry_origem.grid(row=0, column=1, padx=5, pady=5)
-        
+
         self.label_destino = tk.Label(master, text="Vértice de destino:")
         self.label_destino.grid(row=1, column=0, padx=5, pady=5)
         self.entry_destino = tk.Entry(master)
         self.entry_destino.grid(row=1, column=1, padx=5, pady=5)
-        
+
         self.button_calcular = tk.Button(master, text="Calcular", command=self.calcular_dijkstra)
         self.button_calcular.grid(row=2, columnspan=2, padx=5, pady=5)
-        
+
     def calcular_dijkstra(self):
         origem = self.entry_origem.get()
         destino = self.entry_destino.get()
-        
+
         try:
             origem = int(origem)
             destino = int(destino)
         except ValueError:
             messagebox.showerror("Erro", "Por favor, insira números inteiros para origem e destino.")
             return
-        
+
         if origem <= 0 or destino <= 0:
             messagebox.showerror("Erro", "Os vértices devem ser números positivos.")
             return
         
-        arquivo_banco = r"C:\Users\USER\Documents\proj_alg\projeto_djikstra_ufpe\bancos_de_dados\grafo.db"
+        # MUDAR CAMINHO ABAIXO!
+        arquivo_banco = r"D:\User\Desktop\2 projeto_djikstra_ufpe-main\bancos_de_dados\grafo.db" 
         criar_banco_de_dados(arquivo_banco)
-
-        #arquivo_edges = r"C:\dev\git-projects\projeto_djikstra_ufpe\bancos_de_dados\test.edges"
-        arquivo_edges = r"C:\Users\USER\Documents\proj_alg\projeto_djikstra_ufpe\bancos_de_dados\inf-euroroad.edges" 
+        
+        # MUDAR CAMINHO ABAIXO!
+        arquivo_edges = r"D:\User\Desktop\2 projeto_djikstra_ufpe-main\bancos_de_dados\test.edges"
+        # arquivo_edges = r"D:\User\Desktop\2 projeto_djikstra_ufpe-main\bancos_de_dados\inf-euroroad.edges" 
         preencher_banco_de_dados(arquivo_banco, arquivo_edges)
 
         grafo = Grafo()  # Criando uma instância da classe Grafo
@@ -298,11 +319,11 @@ class GUI:
         grafo.carregar_de_banco_de_dados(arquivo_banco)
         grafo.mostrar_grafo()
         # Chamada do método Dijkstra
-        custo=grafo.dijkstra(origem,destino)
-        print("Esee foi o custo:",custo)
-        #grafo.printar_menor_caminho(custo, origem, destino)
+        custo, custo_vem = grafo.dijkstra(origem, destino)
+        print("Este foi o custo:", custo)
+        grafo.printar_menor_caminho(custo_vem, origem, destino)
 
-        #Desenho dos Grafos
+        # Desenho dos Grafos
         G = nx.Graph()
         for vertice in grafo.vertices:
             for adjacente, peso in grafo.vertices[vertice]:
@@ -313,7 +334,7 @@ class GUI:
         nx.draw(G, pos, with_labels=True, node_size=70, node_color='skyblue')
         nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
         plt.show()
-    
+
 
 root = tk.Tk()
 gui = GUI(root)
