@@ -4,7 +4,10 @@ import sqlite3
 import math
 import random
 import time
-#teste
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
 class HeapMin:
     """
     Implementação de uma estrutura de Heap Mínima.
@@ -230,17 +233,37 @@ def preencher_banco_de_dados(arquivo_banco, arquivo_edges):
 
 
 # Criar o banco de dados SQLite
-arquivo_banco = r"C:\dev\git-projects\projeto_djikstra_ufpe\bancos_de_dados\grafo.db"
+arquivo_banco = r"C:\Users\USER\Documents\proj_alg\projeto_djikstra_ufpe\bancos_de_dados\grafo.db"
 criar_banco_de_dados(arquivo_banco)
 
 #arquivo_edges = r"C:\dev\git-projects\projeto_djikstra_ufpe\bancos_de_dados\test.edges"
-arquivo_edges = r"C:\dev\git-projects\projeto_djikstra_ufpe\bancos_de_dados\inf-euroroad.edges" 
+arquivo_edges = r"C:\Users\USER\Documents\proj_alg\projeto_djikstra_ufpe\bancos_de_dados\inf-euroroad.edges" 
 preencher_banco_de_dados(arquivo_banco, arquivo_edges)
 
 # Criar o objeto do Grafo e carregar os dados do banco de dados
 g = Grafo()
 g.carregar_de_banco_de_dados(arquivo_banco)
 g.mostrar_grafo()
+
+# Caminho mais curto
+resultado = g.dijkstra()
+print(f"O menor caminho tem peso: {resultado}")
+
+
+# Criar um grafo direcionado
+G = nx.Graph()
+
+# Adicionar as arestas com pesos
+for vertice in g.vertices:
+    for adjacente, peso in g.vertices[vertice]:
+        G.add_edge(vertice, adjacente, weight=peso)
+
+# Desenhar o grafo
+pos = nx.spring_layout(G,scale=1000)
+labels = nx.get_edge_attributes(G, 'weight')
+nx.draw(G, pos, with_labels=True, node_size=70, node_color='skyblue')
+nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+plt.show()
 
 # Caminho mais curto
 resultado = g.dijkstra()
