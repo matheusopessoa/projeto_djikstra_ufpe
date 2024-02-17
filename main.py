@@ -6,7 +6,8 @@ import random
 import time
 import networkx as nx
 import matplotlib.pyplot as plt
-
+import tkinter as tk
+from tkinter import messagebox
 import os
 
 def encontrar_e_apagar_arquivo(nome_pasta, nome_arquivo):
@@ -155,12 +156,10 @@ class Grafo:
         for vertice in self.vertices:
             print(vertice, "->", self.vertices[vertice])
 
-    def dijkstra(self):
+    def dijkstra(self,origem,destino):
         """
         Algoritmo de Dijkstra para encontrar os caminhos mais curtos a partir de um vértice de origem.
         """
-        origem = int(input("Insira o vértice de origem: "))
-        destino = int(input("Insira o vértice de destino: "))
 
         custo_vem = [[-1, 0] for _ in range(self.num_vertices)]
         custo_vem[origem - 1] = [0, origem]
@@ -182,8 +181,8 @@ class Grafo:
                     custo_vem[adjacente - 1] = [dist + peso, vertice]
                     heap.adiciona_no(dist + peso, adjacente)
         fim = time.time()
-        print("Número de iterações:", iterações)
-        print("Tempo gasto:", fim - inicio, "segundos")
+        messagebox.showinfo("Resultado",f"Número de iterações: {iterações}\nTempo gasto: {fim - inicio}segundos")
+        
 
         return custo_vem[destino - 1][0]  # Retorna o custo mínimo para o destino
 
@@ -245,42 +244,66 @@ def preencher_banco_de_dados(arquivo_banco, arquivo_edges):
         # Salve as alterações e feche a conexão com o banco de dados
         conexao.commit()
         conexao.close()
+class GUI:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Algoritmo de Dijkstra")
+        
+        self.label_origem = tk.Label(master, text="Vértice de origem:")
+        self.label_origem.grid(row=0, column=0, padx=5, pady=5)
+        self.entry_origem = tk.Entry(master)
+        self.entry_origem.grid(row=0, column=1, padx=5, pady=5)
+        
+        self.label_destino = tk.Label(master, text="Vértice de destino:")
+        self.label_destino.grid(row=1, column=0, padx=5, pady=5)
+        self.entry_destino = tk.Entry(master)
+        self.entry_destino.grid(row=1, column=1, padx=5, pady=5)
+        
+        self.button_calcular = tk.Button(master, text="Calcular", command=self.calcular_dijkstra)
+        self.button_calcular.grid(row=2, columnspan=2, padx=5, pady=5)
+        
+    def calcular_dijkstra(self):
+        origem = self.entry_origem.get()
+        destino = self.entry_destino.get()
+        
+        try:
+            origem = int(origem)
+            destino = int(destino)
+        except ValueError:
+            messagebox.showerror("Erro", "Por favor, insira números inteiros para origem e destino.")
+            return
+        
+        if origem <= 0 or destino <= 0:
+            messagebox.showerror("Erro", "Os vértices devem ser números positivos.")
+            return
+        
+        arquivo_banco = r"C:\Users\USER\Documents\proj_alg\projeto_djikstra_ufpe\bancos_de_dados\grafo.db"
+        criar_banco_de_dados(arquivo_banco)
 
+        #arquivo_edges = r"C:\dev\git-projects\projeto_djikstra_ufpe\bancos_de_dados\test.edges"
+        arquivo_edges = r"C:\Users\USER\Documents\proj_alg\projeto_djikstra_ufpe\bancos_de_dados\inf-euroroad.edges" 
+        preencher_banco_de_dados(arquivo_banco, arquivo_edges)
 
+        grafo = Grafo()  # Criando uma instância da classe Grafo
+        # Adicione aqui suas chamadas de métodos para adicionar arestas ao grafo
+        grafo.carregar_de_banco_de_dados(arquivo_banco)
+        grafo.mostrar_grafo()
+        # Chamada do método Dijkstra
+        grafo.dijkstra(origem,destino)
 
-# Criar o banco de dados SQLite
-arquivo_banco = r"C:\Users\USER\Documents\proj_alg\projeto_djikstra_ufpe\bancos_de_dados\grafo.db"
-criar_banco_de_dados(arquivo_banco)
+        #Desenho dos Grafos
+        G = nx.Graph()
+        for vertice in grafo.vertices:
+            for adjacente, peso in grafo.vertices[vertice]:
+                G.add_edge(vertice, adjacente, weight=peso)
 
-#arquivo_edges = r"C:\dev\git-projects\projeto_djikstra_ufpe\bancos_de_dados\test.edges"
-arquivo_edges = r"C:\Users\USER\Documents\proj_alg\projeto_djikstra_ufpe\bancos_de_dados\inf-euroroad.edges" 
-preencher_banco_de_dados(arquivo_banco, arquivo_edges)
+        pos = nx.spring_layout(G)
+        labels = nx.get_edge_attributes(G, 'weight')
+        nx.draw(G, pos, with_labels=True, node_size=70, node_color='skyblue')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+        plt.show()
+    
 
-# Criar o objeto do Grafo e carregar os dados do banco de dados
-g = Grafo()
-g.carregar_de_banco_de_dados(arquivo_banco)
-g.mostrar_grafo()
-
-# Caminho mais curto
-resultado = g.dijkstra()
-print(f"O menor caminho tem peso: {resultado}")
-
-
-# Criar um grafo direcionado
-G = nx.Graph()
-
-# Adicionar as arestas com pesos
-for vertice in g.vertices:
-    for adjacente, peso in g.vertices[vertice]:
-        G.add_edge(vertice, adjacente, weight=peso)
-
-# Desenhar o grafo
-pos = nx.spring_layout(G)
-labels = nx.get_edge_attributes(G, 'weight')
-nx.draw(G, pos, with_labels=True, node_size=70, node_color='skyblue')
-nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
-plt.show()
-
-# Caminho mais curto
-resultado = g.dijkstra()
-print(f"O menor caminho tem peso: {resultado}")
+root = tk.Tk()
+gui = GUI(root)
+root.mainloop()
