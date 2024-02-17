@@ -182,9 +182,18 @@ class Grafo:
                     heap.adiciona_no(dist + peso, adjacente)
         fim = time.time()
         messagebox.showinfo("Resultado",f"Número de iterações: {iterações}\nTempo gasto: {fim - inicio}segundos")
-        
 
         return custo_vem[destino - 1][0]  # Retorna o custo mínimo para o destino
+    
+    def printar_menor_caminho(custo_vem, origem, destino):
+        caminho = []
+        atual = destino
+        while atual != origem:
+            caminho.append(atual)
+            atual = custo_vem[atual - 1][1]
+        caminho.append(origem)
+        caminho.reverse()
+        print("Menor caminho de", origem, "a", destino, ":", caminho)
 
     def carregar_de_banco_de_dados(self, arquivo_banco):
         """
@@ -289,7 +298,9 @@ class GUI:
         grafo.carregar_de_banco_de_dados(arquivo_banco)
         grafo.mostrar_grafo()
         # Chamada do método Dijkstra
-        grafo.dijkstra(origem,destino)
+        custo=grafo.dijkstra(origem,destino)
+        print("Esee foi o custo:",custo)
+        #grafo.printar_menor_caminho(custo, origem, destino)
 
         #Desenho dos Grafos
         G = nx.Graph()
