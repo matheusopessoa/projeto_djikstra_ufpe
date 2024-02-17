@@ -4,7 +4,7 @@ import sqlite3
 import math
 import random
 import time
-
+#teste
 class HeapMin:
     """
     Implementação de uma estrutura de Heap Mínima.
