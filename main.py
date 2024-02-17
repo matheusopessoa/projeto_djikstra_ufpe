@@ -7,6 +7,22 @@ import time
 import networkx as nx
 import matplotlib.pyplot as plt
 
+import os
+
+def encontrar_e_apagar_arquivo(nome_pasta, nome_arquivo):
+    if not os.path.isdir(nome_pasta):
+        return
+    for root, dirs, files in os.walk(nome_pasta):
+        if nome_arquivo in files:
+            arquivo = os.path.join(root, nome_arquivo)
+            os.remove(arquivo)
+            return
+
+
+nome_pasta = r'C:\Users\USER\Documents\proj_alg\projeto_djikstra_ufpe\bancos_de_dados'
+nome_arquivo = 'grafo.db'
+encontrar_e_apagar_arquivo(nome_pasta, nome_arquivo)
+
 
 class HeapMin:
     """
@@ -259,7 +275,7 @@ for vertice in g.vertices:
         G.add_edge(vertice, adjacente, weight=peso)
 
 # Desenhar o grafo
-pos = nx.spring_layout(G,scale=1000)
+pos = nx.spring_layout(G)
 labels = nx.get_edge_attributes(G, 'weight')
 nx.draw(G, pos, with_labels=True, node_size=70, node_color='skyblue')
 nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
