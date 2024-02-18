@@ -14,7 +14,7 @@ O algoritmo de Dijkstra é utilizado para encontrar o menor caminho entre dois v
 
 ### Detalhes da Implementação
 
-- **Automatização da Exclusão do Arquivo `grafo.db`**: O código inclui uma função para encontrar e apagar automaticamente o arquivo `grafo.db` gerado durante a execução, evitando conflitos.
+- **Automatização da Exclusão do Arquivo `grafo.db`, utilizando a biblioteca OS**: O código inclui uma função para encontrar e apagar automaticamente o arquivo `grafo.db` gerado durante a execução, evitando conflitos.
 - **Mapa de Adjacências**: O grafo é representado na forma de lista de adjacências, onde cada vértice tem uma lista de seus vértices adjacentes, juntamente com os pesos das arestas.
 - **Uso da Biblioteca `time`**: A biblioteca `time` é utilizada para calcular o tempo de execução do algoritmo de Dijkstra.
 - **Número de Iterações do Algoritmo**: O código monitora o número de iterações realizadas pelo algoritmo de Dijkstra para encontrar o menor caminho.
@@ -24,7 +24,7 @@ O algoritmo de Dijkstra é utilizado para encontrar o menor caminho entre dois v
 
 1. Clone o repositório para o seu ambiente local.
 2. Certifique-se de ter as bibliotecas necessárias instaladas (especialmente `sqlite3`, `networkx`, `matplotlib` e `tkinter`).
-3. Execute o arquivo principal do código (`dijkstra.py`).
+3. Execute o arquivo principal do código (`main.py`).
 4. Insira os vértices de origem e destino na interface gráfica e clique em "Calcular".
 5. O menor caminho entre os vértices será calculado e exibido no output, juntamente com o número de iterações e o tempo de execução.
 
