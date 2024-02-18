@@ -310,8 +310,8 @@ class GUI:
         criar_banco_de_dados(arquivo_banco)
         
         # MUDAR CAMINHO ABAIXO!
-        arquivo_edges = r"D:\User\Desktop\2 projeto_djikstra_ufpe-main\bancos_de_dados\test.edges"
-        # arquivo_edges = r"D:\User\Desktop\2 projeto_djikstra_ufpe-main\bancos_de_dados\inf-euroroad.edges" 
+        # arquivo_edges = r"D:\User\Desktop\2 projeto_djikstra_ufpe-main\bancos_de_dados\test.edges"
+        arquivo_edges = r"D:\User\Desktop\2 projeto_djikstra_ufpe-main\bancos_de_dados\inf-euroroad.edges" 
         preencher_banco_de_dados(arquivo_banco, arquivo_edges)
 
         grafo = Grafo()  # Criando uma instância da classe Grafo
